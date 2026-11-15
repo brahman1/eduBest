@@ -1,0 +1,40 @@
+.edubest-brand {
+  gap: 13px;
+}
+.edubest-brand-logo,
+.edubest-brand-symbol {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
+}
+.school-nav .edubest-brand-logo {
+  width: 190px;
+}
+.school-footer .edubest-brand-logo {
+  width: 150px;
+}
+.workspace .sidebar .brand .edubest-brand-logo {
+  width: 176px;
+  max-width: 100%;
+}
+.workspace .school-tag .edubest-brand-symbol {
+  width: 30px;
+}
+.receipt-brand .edubest-brand-symbol {
+  width: 58px;
+}
+.boot .edubest-brand-symbol {
+  margin: auto;
+}
+@media (max-width: 700px) {
+  .school-nav .edubest-brand-logo {
+    width: 150px;
+  }
+}
+@media (max-width: 360px) {
+  .school-nav .edubest-brand-logo {
+    width: 130px;
+  }
+}

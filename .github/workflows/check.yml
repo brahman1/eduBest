@@ -1,0 +1,76 @@
+name: Validation EduBest
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      db:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: edubest_test
+          POSTGRES_USER: edubest
+          POSTGRES_PASSWORD: edubest_test_only
+        ports: ['5448:5432']
+        options: --health-cmd "pg_isready -U edubest" --health-interval 3s --health-timeout 3s --health-retries 20
+      mail:
+        image: axllent/mailpit:v1.31.5
+        ports: ['1038:1025', '8038:8025']
+    env:
+      DATABASE_URL: postgresql://edubest:edubest_test_only@127.0.0.1:5448/edubest_test
+      EDUBEST_TEST_DATABASE: 'true'
+      EDUBEST_DEMO_ENABLED: 'false'
+      SECURITY_ENCRYPTION_KEY: ci-only-encryption-key-with-32-characters
+      PORT: '4206'
+      WEB_URL: http://127.0.0.1:3100
+      ALLOWED_ORIGINS: http://127.0.0.1:3100
+      API_INTERNAL_URL: http://127.0.0.1:4206
+      TEST_API_URL: http://127.0.0.1:4206/api
+      TEST_WEB_URL: http://127.0.0.1:3100
+      TEST_MAIL_URL: http://127.0.0.1:8038
+      SMTP_HOST: 127.0.0.1
+      SMTP_PORT: '1038'
+      SMTP_FROM: EduBest <test@localhost>
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22.23.3', cache: npm}
+      - name: Outils PostgreSQL 17 du service isolé
+        env:
+          EDUBEST_CI_DB_CONTAINER: ${{ job.services.db.id }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/edubest-pg"
+          cat > "$RUNNER_TEMP/edubest-pg/client" <<'EOF'
+          #!/bin/sh
+          set -eu
+          tool=$(basename "$0")
+          case "$tool" in pg_dump|pg_restore|psql) ;; *) exit 2 ;; esac
+          exec docker exec -i -e PGHOST=127.0.0.1 -e PGPORT=5432 -e PGUSER -e PGPASSWORD -e PGDATABASE -e PGSSLMODE -e PGCONNECT_TIMEOUT "$EDUBEST_CI_DB_CONTAINER" "$tool" "$@"
+          EOF
+          for tool in pg_dump pg_restore psql; do
+            cp "$RUNNER_TEMP/edubest-pg/client" "$RUNNER_TEMP/edubest-pg/$tool"
+            chmod 700 "$RUNNER_TEMP/edubest-pg/$tool"
+          done
+          echo "EDUBEST_PG_BIN=$RUNNER_TEMP/edubest-pg" >> "$GITHUB_ENV"
+          echo "EDUBEST_CI_DB_CONTAINER=$EDUBEST_CI_DB_CONTAINER" >> "$GITHUB_ENV"
+      - run: npm ci
+      - run: npm run check
+      - run: npm run format:check
+      - run: npm run build
+      - run: npm run export -w mobile -- --source-maps
+      - run: node scripts/check-mobile-bundle.mjs
+      - run: npm audit --workspace api --workspace web --workspace shared --omit=dev
+      - name: API, site et tests isolés
+        run: |
+          npm run start:api > /tmp/edubest-api.log 2>&1 &
+          npm run start:web > /tmp/edubest-web.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3100/api/public/health; then break; fi
+            sleep 1
+          done
+          npm test
+      - if: failure()
+        run: cat /tmp/edubest-api.log /tmp/edubest-web.log || true

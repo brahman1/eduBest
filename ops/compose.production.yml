@@ -1,0 +1,100 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: edubest
+      POSTGRES_DB: edubest
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Configure POSTGRES_PASSWORD}
+    volumes: [db-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U edubest]
+      interval: 5s
+      retries: 15
+    networks: [private]
+  api:
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    build:
+      context: ..
+      dockerfile: ops/Dockerfile.api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://edubest:${POSTGRES_PASSWORD}@db:5432/edubest
+      NODE_ENV: production
+      WEB_URL: https://${DOMAIN:?Configure DOMAIN}
+      ALLOWED_ORIGINS: https://${DOMAIN}
+      SMTP_HOST: ${SMTP_HOST:?Configure SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM: ${SMTP_FROM:?Configure SMTP_FROM}
+      SECURITY_ENCRYPTION_KEY: ${SECURITY_ENCRYPTION_KEY:?Configure SECURITY_ENCRYPTION_KEY}
+      EDUBEST_DEMO_ENABLED: "false"
+      REQUIRE_ADMIN_MFA: "true"
+      SCHOOL_LEGAL_NAME: ${SCHOOL_LEGAL_NAME:?Configure SCHOOL_LEGAL_NAME}
+      SCHOOL_ADDRESS: ${SCHOOL_ADDRESS:?Configure SCHOOL_ADDRESS}
+      SCHOOL_CONTACT_EMAIL: ${SCHOOL_CONTACT_EMAIL:?Configure SCHOOL_CONTACT_EMAIL}
+      SCHOOL_PRIVACY_EMAIL: ${SCHOOL_PRIVACY_EMAIL:-}
+      DATA_HOSTING_DESCRIPTION: ${DATA_HOSTING_DESCRIPTION:?Configure DATA_HOSTING_DESCRIPTION}
+      DATA_RETENTION_POLICY: ${DATA_RETENTION_POLICY:?Configure DATA_RETENTION_POLICY}
+      DATA_PROCESSING_BASIS: ${DATA_PROCESSING_BASIS:?Configure DATA_PROCESSING_BASIS}
+      TRUST_PROXY_HOPS: "1"
+      EDUBEST_ADMIN_EMAIL: ${EDUBEST_ADMIN_EMAIL:-}
+      EDUBEST_ADMIN_NAME: ${EDUBEST_ADMIN_NAME:-}
+      EDUBEST_ADMIN_PASSWORD: ${EDUBEST_ADMIN_PASSWORD:-}
+    depends_on:
+      db: {condition: service_healthy}
+    networks: [private, outgoing]
+  web:
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    build:
+      context: ..
+      dockerfile: ops/Dockerfile.web
+    restart: unless-stopped
+    depends_on:
+      api: {condition: service_healthy}
+    networks: [private]
+  gateway:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment: {DOMAIN: '${DOMAIN}', TLS_EMAIL: '${TLS_EMAIL:?Configure TLS_EMAIL}'}
+    ports: ['80:80', '443:443', '443:443/udp']
+    volumes: ['./Caddyfile:/etc/caddy/Caddyfile:ro', 'caddy-data:/data', 'caddy-config:/config']
+    depends_on: [web, api]
+    networks: [private, outgoing]
+  backup:
+    build: {context: .., dockerfile: ops/Dockerfile.backup}
+    profiles: [backup]
+    environment:
+      DATABASE_URL: postgres://edubest:${POSTGRES_PASSWORD}@db:5432/edubest
+      EDUBEST_BACKUP_KEY_FILE: /run/secrets/backup-key
+      EDUBEST_RESTORE_DATABASE_URL: ${EDUBEST_RESTORE_DATABASE_URL:-}
+    volumes: ['./backup.key:/run/secrets/backup-key:ro', './backups:/backups']
+    command: [create, /backups/edubest-manual.edubest-backup]
+    networks: [private]
+  backup-scheduled:
+    build: {context: .., dockerfile: ops/Dockerfile.backup}
+    profiles: [backup-scheduled]
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://edubest:${POSTGRES_PASSWORD}@db:5432/edubest
+      EDUBEST_BACKUP_KEY_FILE: /run/secrets/backup-key
+      EDUBEST_BACKUP_INTERVAL_SECONDS: ${EDUBEST_BACKUP_INTERVAL_SECONDS:-86400}
+    volumes: ['./backup.key:/run/secrets/backup-key:ro', './backups:/backups']
+    entrypoint: [node, scripts/backup-schedule.mjs]
+    networks: [private]
+volumes:
+  db-data:
+  caddy-data:
+  caddy-config:
+networks:
+  private: {internal: true}
+  outgoing:

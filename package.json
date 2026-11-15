@@ -1,0 +1,48 @@
+{
+  "name": "edubest",
+  "private": true,
+  "workspaces": [
+    "api",
+    "web",
+    "mobile",
+    "shared"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w api",
+    "dev:web": "npm run dev -w web",
+    "dev:mobile": "npm run start -w mobile",
+    "build": "npm run build -w shared && npm run build -w api && npm run build -w web",
+    "check": "npm run check -w shared && npm run check -w api && npm run check -w web && npm run check -w mobile",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:mobile": "npm run build -w shared && node --test tests/mobile-client-check.mjs tests/mobile-admin-policy.test.mjs tests/calendar.test.mjs tests/recurrence.test.mjs tests/personal-home.test.mjs",
+    "demo": "node scripts/demo.mjs && node scripts/demo-showcase.mjs",
+    "format": "prettier --write \"{api,web,mobile,shared,tests,scripts}/**/*.{ts,tsx,mjs,json,css}\"",
+    "format:check": "prettier --check \"{api,web,mobile,shared,tests,scripts}/**/*.{ts,tsx,mjs,json,css}\"",
+    "start:api": "npm run start -w api",
+    "start:web": "node scripts/serve-web.mjs",
+    "preview:mobile": "node scripts/preview-mobile.mjs",
+    "setup": "node scripts/setup-school.mjs",
+    "production:check": "node scripts/check-production.mjs",
+    "backup:create": "node scripts/backup.mjs create",
+    "backup:restore": "node scripts/backup.mjs restore",
+    "octenium:schema": "node scripts/prepare-octenium-schema.mjs",
+    "octenium:check": "node ops/octenium/control.mjs check",
+    "octenium:prepare": "node ops/octenium/control.mjs prepare",
+    "octenium:smoke": "node ops/octenium/control.mjs smoke",
+    "brand:sync": "node scripts/sync-brand-theme.mjs && node scripts/generate-assets.mjs && node scripts/verify-assets.mjs && node scripts/verify-brand-theme.mjs",
+    "start:local": "node scripts/start-local.mjs",
+    "stop:local": "node scripts/stop-local.mjs"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "overrides": {
+    "multer": "2.5.0",
+    "xcode": {
+      "uuid": "11.1.1"
+    }
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10"
+  }
+}

@@ -1,0 +1,6 @@
+FROM postgres:17-alpine
+RUN apk add --no-cache nodejs
+WORKDIR /app
+COPY scripts/backup.mjs scripts/backup-crypto.mjs scripts/backup-schedule.mjs ./scripts/
+COPY shared/database-policy.cjs ./shared/database-policy.cjs
+ENTRYPOINT ["node", "scripts/backup.mjs"]

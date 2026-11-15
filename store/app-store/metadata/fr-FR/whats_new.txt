@@ -1,0 +1,1 @@
+Première version iOS d’EduBest : espaces adaptés aux élèves, parents, enseignants et à la direction ; planning, présences, documents et suivi de l’établissement.

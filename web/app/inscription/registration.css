@@ -1,0 +1,115 @@
+.registration-public-card {
+  width: min(800px, calc(100% - 32px));
+  margin: 42px auto 64px;
+  background: var(--brand-surface, white);
+  color: var(--brand-ink, #173448);
+  border: 1px solid #dbe4ea;
+  border-radius: 22px;
+  padding: clamp(18px, 5vw, 42px);
+}
+.registration-public-card h1 {
+  font-size: clamp(28px, 5vw, 42px);
+  margin: 0 0 18px;
+}
+.registration-public .school-nav {
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.registration-public .school-nav-anchor {
+  display: inline-flex;
+}
+.registration-form,
+.registration-panel {
+  display: grid;
+  gap: 16px;
+}
+.registration-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.registration-fields label {
+  display: grid;
+  gap: 5px;
+  font-weight: 600;
+}
+.registration-fields input,
+.registration-fields select,
+.registration-panel input:not([type="checkbox"]),
+.registration-panel textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #b6c8d4;
+  border-radius: 9px;
+  font: inherit;
+  color: inherit;
+  background: white;
+}
+.registration-options {
+  border: 1px solid #dbe4ea;
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 0;
+}
+.registration-options legend {
+  padding-inline: 5px;
+  font-weight: 700;
+}
+.registration-options label,
+.registration-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-block: 7px;
+}
+.registration-options input,
+.registration-check input {
+  flex: 0 0 auto;
+  margin-top: 0.35em;
+  accent-color: #1d4c68;
+}
+.registration-options small {
+  display: block;
+}
+.registration-error,
+.registration-info {
+  border-radius: 8px;
+  padding: 12px;
+}
+.registration-error {
+  background: #fff0ef;
+  color: #83261c;
+}
+.registration-info {
+  background: #eaf3f7;
+  color: #164561;
+}
+.registration-panel article {
+  border: 1px solid #dbe4ea;
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+.registration-panel article h3,
+.registration-panel article p {
+  margin: 0;
+}
+.registration-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.registration-panel .registration-options label {
+  cursor: pointer;
+}
+@media (max-width: 520px) {
+  .registration-fields {
+    grid-template-columns: 1fr;
+  }
+  .registration-public-card {
+    margin-top: 24px;
+  }
+}

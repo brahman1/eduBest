@@ -1,0 +1,55 @@
+# Configuration sans démonstration. Aucun service n'est activé par ce fichier seul.
+# Base PostgreSQL persistante à fournir séparément ; ne pas réutiliser la base locale.
+services:
+  - type: web
+    name: edubest
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci --include=dev --workspace api --workspace web --workspace shared && npm run build
+    startCommand: node scripts/serve-render.mjs
+    healthCheckPath: /api/public/health
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: 22.23.3
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: NEXT_PUBLIC_API_URL
+        value: /api
+      - key: API_INTERNAL_URL
+        value: http://127.0.0.1:4200
+      - key: DATABASE_URL
+        sync: false
+      - key: EDUBEST_DEMO_ENABLED
+        value: "false"
+      - key: REQUIRE_ADMIN_MFA
+        value: "true"
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: SECURITY_ENCRYPTION_KEY
+        sync: false
+      - key: SCHOOL_LEGAL_NAME
+        sync: false
+      - key: SCHOOL_ADDRESS
+        sync: false
+      - key: SCHOOL_CONTACT_EMAIL
+        sync: false
+      - key: SCHOOL_PRIVACY_EMAIL
+        sync: false
+      - key: DATA_HOSTING_DESCRIPTION
+        sync: false
+      - key: DATA_RETENTION_POLICY
+        sync: false
+      - key: DATA_PROCESSING_BASIS
+        sync: false

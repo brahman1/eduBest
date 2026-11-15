@@ -1,0 +1,14 @@
+import {build} from 'esbuild';
+import {createRequire} from 'node:module';
+import vm from 'node:vm';
+import React from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import assert from 'node:assert/strict';
+const require=createRequire(new URL('../web/package.json',import.meta.url));
+const source=await build({entryPoints:[new URL('../web/app/school-brand.tsx',import.meta.url).pathname.replace(/^\/(\w:)/,'$1')],bundle:true,packages:'external',platform:'node',format:'cjs',write:false,loader:{'.css':'empty'}});
+const module={exports:{}};vm.runInNewContext(source.outputFiles[0].text,{require,module,exports:module.exports});
+const Brand=module.exports.default;
+const html=renderToStaticMarkup(React.createElement(Brand,{href:'/app?view=dashboard',light:true}));
+assert.ok(html.includes('href="/app?view=dashboard"'));assert.ok(html.includes('tableau de bord'));assert.ok(!html.includes('href="/"'));
+const publicHtml=renderToStaticMarkup(React.createElement(Brand,{}));assert.ok(publicHtml.includes('href="/"'));
+console.log('Logo connecté vers le dashboard ; logo public vers l’accueil : rendu valide, sans navigateur.');

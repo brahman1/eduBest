@@ -1,0 +1,1 @@
+école,scolaire,élève,parent,enseignant,planning,présences,Algérie,cours,éducation

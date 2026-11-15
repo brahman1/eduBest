@@ -1,0 +1,24 @@
+EduBest accompagne les élèves, les parents et les équipes de l’école EduBest à M’Chedallah, en Algérie.
+
+Chaque utilisateur retrouve les informations correspondant à son rôle et aux accès attribués par la direction.
+
+POUR LES ÉLÈVES
+Consultez votre planning personnel, vos cours, vos présences, les annonces et les documents partagés par l’école.
+
+POUR LES PARENTS
+Retrouvez le suivi de vos enfants, leurs cours, leurs présences, les informations financières mises à disposition et les communications de l’établissement.
+
+POUR LES ENSEIGNANTS
+Consultez votre agenda et vos groupes, retrouvez les séances et renseignez les présences selon vos autorisations.
+
+POUR LA DIRECTION
+Accédez aux outils de gestion de l’établissement : élèves et familles, équipe, groupes, planning, échéances, règlements, documents et annonces.
+
+L’interface est disponible en français et en arabe. Les horaires des cours suivent l’heure d’Alger et les montants sont exprimés en dinars algériens.
+
+Les élèves et les parents peuvent déposer une demande d’inscription, choisir leurs cours et indiquer leur niveau scolaire. Une confirmation par email et la validation de l’école sont nécessaires pour activer le compte. Une connexion Internet est nécessaire.
+
+L’application permet de consulter les frais et les règlements enregistrés par l’établissement ; elle ne propose pas de paiement bancaire intégré.
+
+Contact : contact@edubest.dz
+Confidentialité : https://edubest.dz/legal

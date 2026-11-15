@@ -1,0 +1,53 @@
+{
+  "cli": { "version": ">=16.0.0", "appVersionSource": "remote" },
+  "build": {
+    "development": { "developmentClient": true, "distribution": "internal" },
+    "preview": {
+      "distribution": "internal",
+      "android": { "buildType": "apk" }
+    },
+    "production": {
+      "autoIncrement": true,
+      "environment": "production",
+      "env": {
+        "EDUBEST_RELEASE": "true",
+        "EXPO_PUBLIC_API_URL": "https://api.edubest.dz/api",
+        "EXPO_PUBLIC_WEB_URL": "https://edubest.dz"
+      },
+      "android": { "buildType": "app-bundle" }
+    },
+    "production-apk": {
+      "extends": "production",
+      "distribution": "internal",
+      "android": { "buildType": "apk" }
+    },
+    "ios-production": {
+      "extends": "production",
+      "env": {
+        "EDUBEST_RELEASE": "true",
+        "EXPO_PUBLIC_API_URL": "https://api.edubest.dz/api",
+        "EXPO_PUBLIC_WEB_URL": "https://edubest.dz",
+        "EXPO_PUBLIC_REVIEW_API_URL": "",
+        "EXPO_PUBLIC_REVIEW_WEB_URL": ""
+      },
+      "ios": { "simulator": false, "buildConfiguration": "Release" }
+    },
+    "ios-simulator": {
+      "extends": "ios-production",
+      "distribution": "internal",
+      "autoIncrement": false,
+      "ios": { "simulator": true, "buildConfiguration": "Release" }
+    },
+    "ios-captures": {
+      "extends": "ios-simulator",
+      "env": {
+        "EDUBEST_RELEASE": "true",
+        "EXPO_PUBLIC_API_URL": "https://demo-api.edubest.dz/api",
+        "EXPO_PUBLIC_WEB_URL": "https://demo.edubest.dz",
+        "EXPO_PUBLIC_REVIEW_API_URL": "",
+        "EXPO_PUBLIC_REVIEW_WEB_URL": ""
+      }
+    }
+  },
+  "submit": { "production": {}, "ios-production": {} }
+}

@@ -1,0 +1,26 @@
+app_name: EduBest
+version: 1.1.4
+initial_ios_build: 1
+bundle_identifier: dz.edubest.app
+sku_suggestion: EDUBEST-IOS-001
+primary_category: Education
+primary_locale: fr-FR
+additional_locale: ar-SA
+availability_to_select: ['Algeria']
+download_price: Free
+in_app_purchases: False
+ads: False
+advertising_tracking: False
+website: https://edubest.dz
+support_url: https://edubest.dz
+privacy_url: https://edubest.dz/legal
+account_deletion_url: https://edubest.dz/account-deletion
+school_contact: contact@edubest.dz
+technical_contact: contact@brainfor.net
+school_responsible_person: KACI Belkacem
+copyright_proposal: 2026 KACI Belkacem — EduBest
+review_contact_phone_to_confirm: True
+seller_name_from_apple_account: Verify in App Store Connect, not determined by the app name
+age_rating: Complete the Apple questionnaire truthfully; do not copy the Google rating or promise a result.
+kids_category: Not selected automatically; direct use by children must be disclosed truthfully.
+publication_status: Prepared only; no signed IPA, native screenshots or Apple review submission produced yet.

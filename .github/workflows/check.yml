@@ -36,7 +36,7 @@ jobs:
       NEXT_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with: {node-version: '22.23.3', cache: npm}
       - name: Outils PostgreSQL 17 du service isolé
         env:
